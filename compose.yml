@@ -22,7 +22,7 @@ services:
       KAFKA_LOG_SEGMENT_BYTES: 107374182
       KAFKA_LOG_CLEANUP_POLICY: delete
     volumes:
-      - kafka_data:/var/lib/kafka/data
+      - ./deploy/data/kafka:/var/lib/kafka/data
     healthcheck:
       test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
       interval: 10s
@@ -37,8 +37,8 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: demo
     volumes:
-      - pg_data:/var/lib/postgresql/data
-      - pg_init:/docker-entrypoint-initdb.d
+      - ./deploy/data/postgres:/var/lib/postgresql/data
+      - ./deploy/sql:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
     restart: unless-stopped
@@ -62,23 +62,3 @@ services:
       timeout: 5s
       retries: 3
       start_period: 5s
-
-volumes:
-  kafka_data:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: ./deploy/data/kafka
-  pg_data:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: ./deploy/data/postgres
-  pg_init:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: ./deploy/sql
